@@ -28,6 +28,11 @@ class CIN7Stream(RESTStream):
     #     return self.config["api_url"]
 
     def limit_gen():
+        """
+        In Api's we don't have a order or product total limit so I define
+        the generator function to move on till I get the empty result which
+        is set on next_url_token and parsar function.
+        """
         num = 1
         while True:
             yield num

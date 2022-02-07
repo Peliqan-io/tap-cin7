@@ -1,6 +1,5 @@
 """REST client handling, including CIN7Stream base class."""
 
-from black import main
 import requests
 from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable

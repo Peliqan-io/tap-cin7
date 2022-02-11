@@ -35,8 +35,8 @@ class CIN7Stream(RESTStream):
         """
         num = 1
         while True:
-            yield num
             num += 1
+            yield num
     
     next_page = limit_gen()
     check_empty_response = True
@@ -91,8 +91,11 @@ class CIN7Stream(RESTStream):
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
-        if next_page_token:
+        if next_page_token is None:
+            params["page"] = 1
+        else:
             params["page"] = next_page_token
+        
         if self.replication_key:
             params["sort"] = "asc"
             params["order_by"] = self.replication_key

@@ -356,3 +356,36 @@ class StockStream(CIN7Stream):
     
        
         ).to_dict()
+
+class BranchStream(CIN7Stream):
+    """Define custom stream."""
+    name = "stockstream"
+    path = "/v1/Branches"
+    primary_keys = ["productId"]
+    replication_key = None
+    records_jsonpath = "$[*]"
+    # Optionally, you may also use `schema_filepath` in place of `schema`:
+    # schema_filepath = SCHEMAS_DIR / "users.json"
+    schema = th.PropertiesList(
+        th.Property("productId", th.IntegerType),
+        th.Property("productOptionId", th.IntegerType),
+        th.Property("modifiedDate",th.StringType),
+        th.Property("styleCode",th.StringType),
+        th.Property("code",th.StringType),
+        th.Property("barcode",th.StringType),
+        th.Property("branchId",th.IntegerType),
+        th.Property("branchName",th.StringType),
+        th.Property("productName",th.StringType),
+        th.Property("option1",th.StringType),
+        th.Property("option2",th.StringType),
+        th.Property("option3",th.StringType),
+        th.Property("size",th.StringType),
+        th.Property("available",th.NumberType),
+        th.Property("stockOnHand",th.NumberType),
+        th.Property("openSales",th.NumberType),
+        th.Property("incoming",th.NumberType),
+        th.Property("virtual",th.NumberType),
+        th.Property("holding",th.NumberType)
+    
+       
+        ).to_dict()

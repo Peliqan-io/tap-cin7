@@ -62,32 +62,6 @@ class ProductStream(CIN7Stream):
         ))
     ).to_dict()
 
-class VoucherStream(CIN7Stream):
-    """Define custom stream."""
-    name = "voucher"
-    path = "/v1/Voucher?rows=250"
-    primary_keys = ["customerID"]
-    replication_key = None
-    records_jsonpath = "$[*]"
-    # Optionally, you may also use `schema_filepath` in place of `schema`:
-    # schema_filepath = SCHEMAS_DIR / "users.json"
-    schema = th.PropertiesList(
-        th.Property("customerID", th.IntegerType),
-        th.Property("createdDate", th.StringType),
-        th.Property("status",th.StringType),
-        th.Property("code",th.StringType),
-        th.Property("type",th.StringType),
-        th.Property("description",th.StringType),
-        th.Property("expiryDate",th.StringType),
-        th.Property("amount",th.NumberType),
-        th.Property("customerEmail",th.StringType),
-        th.Property("redeemedCount",th.IntegerType),
-        th.Property("redeemedCountLimit",th.IntegerType),
-        th.Property("redeemedAmount",th.NumberType)
-       
-    ).to_dict()
-
-
 class PurchaseOrdersStream(CIN7Stream):
     """Define custom stream."""
     name = "purchase_orders"
@@ -359,7 +333,7 @@ class StockStream(CIN7Stream):
 
 class BranchStream(CIN7Stream):
     """Define custom stream."""
-    name = "stockstream"
+    name = "branchstream"
     path = "/v1/Branches"
     primary_keys = ["productId"]
     replication_key = None
@@ -389,3 +363,30 @@ class BranchStream(CIN7Stream):
     
        
         ).to_dict()
+
+
+
+class VoucherStream(CIN7Stream):
+    """Define custom stream."""
+    name = "voucher"
+    path = "/v1/Voucher?rows=250"
+    primary_keys = ["customerID"]
+    replication_key = None
+    records_jsonpath = "$[*]"
+    # Optionally, you may also use `schema_filepath` in place of `schema`:
+    # schema_filepath = SCHEMAS_DIR / "users.json"
+    schema = th.PropertiesList(
+        th.Property("customerID", th.IntegerType),
+        th.Property("createdDate", th.StringType),
+        th.Property("status",th.StringType),
+        th.Property("code",th.StringType),
+        th.Property("type",th.StringType),
+        th.Property("description",th.StringType),
+        th.Property("expiryDate",th.StringType),
+        th.Property("amount",th.NumberType),
+        th.Property("customerEmail",th.StringType),
+        th.Property("redeemedCount",th.IntegerType),
+        th.Property("redeemedCountLimit",th.IntegerType),
+        th.Property("redeemedAmount",th.NumberType)
+       
+    ).to_dict()

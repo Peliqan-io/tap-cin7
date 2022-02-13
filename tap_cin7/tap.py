@@ -8,9 +8,9 @@ from singer_sdk import typing as th  # JSON schema typing helpers
 from tap_cin7.streams import (
     ProductStream,
     PurchaseOrdersStream,
-    VoucherStream,
     OrderStream,
-    StockStream
+    StockStream,
+    VoucherStream
 
 )
 # TODO: Compile a list of custom stream types here
@@ -18,9 +18,9 @@ from tap_cin7.streams import (
 STREAM_TYPES = [
     ProductStream,
     PurchaseOrdersStream,
-    VoucherStream,
     OrderStream,
-    StockStream
+    StockStream,
+    VoucherStream
 ]
 
 

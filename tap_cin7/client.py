@@ -2,11 +2,12 @@
 
 import requests
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Iterable
+from typing import Any,Callable, Dict, Optional, Union, List, Iterable
+import backoff
 import time
 import json
 from memoization import cached
-
+from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
 from singer_sdk.authenticators import BasicAuthenticator
@@ -25,19 +26,8 @@ class CIN7Stream(RESTStream):
     # def url_base(self) -> str:
     #     """Return the API URL root, configurable via tap settings."""
     #     return self.config["api_url"]
-
-    def limit_gen():
-        """
-        In Api's we don't have a order or product total limit so I define
-        the generator function to move on till I get the empty result which
-        is set on next_url_token and parsar function.
-        """
-        num = 1
-        while True:
-            num += 1
-            yield num
     
-    next_page = limit_gen()
+    
     check_empty_response = True
 
 
@@ -69,21 +59,20 @@ class CIN7Stream(RESTStream):
         self, response: requests.Response, previous_token: Optional[Any]
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
-        # TODO: If pagination is required, return a token which can be used to get the
-        #       next page. If this is the final page, return "None" to end the
-        #       pagination loop.
         if previous_token is None:
+            # If previous_token is None, we only got the first page so we should request page 2
+            return 2
 
-            previous_token = self.next_page.__next__()
-            next_page_token = previous_token
-        else:
-            if self.check_empty_response:
-                next_page_token = self.next_page.__next__()
-            else:
-                next_page_token = None
+        # Parse response as JSON
+        res = response.json()
+        if len(res) == 0:
+            # If this page was empty, we are done querying
+            return None
+        
         time.sleep(1)
+        # Else, query next page
+        return previous_token + 1
 
-        return next_page_token
 
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
@@ -100,6 +89,8 @@ class CIN7Stream(RESTStream):
             params["order_by"] = self.replication_key
         return params
 
+    
+
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
@@ -113,11 +104,12 @@ class CIN7Stream(RESTStream):
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         """Parse the response and return an iterator of result rows."""
         # TODO: Parse response body and return a set of records.
-        if len(json.loads(response.text))==0:
-            self.check_empty_response = False
         yield from extract_jsonpath(self.records_jsonpath, input=response.json())
 
+    
     def post_process(self, row: dict, context: Optional[dict]) -> dict:
         """As needed, append or transform raw data to match expected structure."""
         # TODO: Delete this method if not needed.
         return row
+
+    

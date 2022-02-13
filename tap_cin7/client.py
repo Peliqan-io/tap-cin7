@@ -69,7 +69,7 @@ class CIN7Stream(RESTStream):
             # If this page was empty, we are done querying
             return None
         
-        time.sleep(1)
+        # time.sleep(1)
         # Else, query next page
         return previous_token + 1
 
@@ -112,4 +112,29 @@ class CIN7Stream(RESTStream):
         # TODO: Delete this method if not needed.
         return row
 
+
+    def request_decorator(self, func: Callable) -> Callable:
+        """Instantiate a decorator for handling request failures.
+
+        Developers may override this method to provide custom backoff or retry
+        handling.
+
+        Args:
+            func: Function to decorate.
+
+        Returns:
+            A decorated method.
+        """
+        decorator: Callable = backoff.on_exception(
+            backoff.expo,
+            (
+                RetriableAPIError,
+                requests.exceptions.ReadTimeout,
+                requests.exceptions.TooManyRedirects
+            ),
+            max_tries=50,
+            factor=2,
+            max_time=600
+        )(func)
+        return decorator
     

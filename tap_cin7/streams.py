@@ -301,7 +301,7 @@ class OrderStream(CIN7Stream):
 class StockStream(CIN7Stream):
     """Define custom stream."""
     name = "stockstream"
-    path = "/v1/Stock"
+    path = "/v1/Stock?rows=250"
     primary_keys = ["productId"]
     replication_key = None
     records_jsonpath = "$[*]"

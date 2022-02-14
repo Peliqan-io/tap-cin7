@@ -6,12 +6,16 @@ from typing import Any,Callable, Dict, Optional, Union, List, Iterable
 import backoff
 import time
 import json
+import singer
+import logging
 from memoization import cached
 from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
 from singer_sdk.authenticators import BasicAuthenticator
 
+LOGGER = singer.get_logger()
+logging.getLogger('backoff').setLevel(logging.CRITICAL)
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
@@ -112,7 +116,9 @@ class CIN7Stream(RESTStream):
         # TODO: Delete this method if not needed.
         return row
 
-
+    def log_backoff_attempt(self, details):
+        LOGGER.info("ConnectionFailure detected, triggering backoff: %d try", details.get("tries"))
+    
     def request_decorator(self, func: Callable) -> Callable:
         """Instantiate a decorator for handling request failures.
 
@@ -129,12 +135,14 @@ class CIN7Stream(RESTStream):
             backoff.expo,
             (
                 RetriableAPIError,
+                FatalAPIError,
                 requests.exceptions.ReadTimeout,
                 requests.exceptions.TooManyRedirects
             ),
-            max_tries=50,
+            max_tries=10,
             factor=2,
-            max_time=600
+            max_time=600,
+            on_backoff=self.log_backoff_attempt
         )(func)
         return decorator
     

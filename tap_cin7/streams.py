@@ -25,8 +25,14 @@ class ProductStream(CIN7Stream):
     schema = th.PropertiesList(
         th.Property("id", th.IntegerType),
         th.Property("name", th.StringType),
+        th.Property("status", th.StringType),
         th.Property("createdDate",th.StringType),
         th.Property("modifiedDate",th.StringType),
+        th.Property("description", th.StringType),
+        th.Property("images", th.ArrayType(
+            th.ObjectType(th.Property("link", th.StringType))
+
+        )),
         th.Property("supplierId",th.IntegerType),
         th.Property("brand",th.StringType),
         th.Property("category",th.StringType),
@@ -50,6 +56,10 @@ class ProductStream(CIN7Stream):
                 th.Property("specialDays", th.IntegerType),
                 th.Property("stockAvailable", th.NumberType),
                 th.Property("stockOnHand", th.NumberType),
+                th.Property("image", 
+                th.ObjectType(th.Property("link", th.StringType))
+
+                ),
                 th.Property("priceColumns", th.ObjectType(
                     th.Property("priceAUD", th.NumberType),
                     th.Property("priceGBP", th.NumberType),

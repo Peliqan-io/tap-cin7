@@ -24,19 +24,12 @@ class CIN7Stream(RESTStream):
     """CIN7 stream class."""
 
     url_base = "https://api.cin7.com/api"
-
-    # OR use a dynamic url_base:
-    # @property
-    # def url_base(self) -> str:
-    #     """Return the API URL root, configurable via tap settings."""
-    #     return self.config["api_url"]
-    
     
     check_empty_response = True
 
 
-    records_jsonpath = "$[*]"  # Or override `parse_response`.
-    next_page_token_jsonpath = ""  # Or override `get_next_page_token`.
+    records_jsonpath = "$[*]"
+    next_page_token_jsonpath = ""
 
     @property
     def authenticator(self) -> BasicAuthenticator:
@@ -53,8 +46,6 @@ class CIN7Stream(RESTStream):
         headers = {}
         if "user_agent" in self.config:
             headers["User-Agent"] = self.config.get("user_agent")
-        # If not using an authenticator, you may also provide inline auth headers:
-        # headers["Private-Token"] = self.config.get("auth_token")
         return headers
     
 
@@ -64,17 +55,12 @@ class CIN7Stream(RESTStream):
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
         if previous_token is None:
-            # If previous_token is None, we only got the first page so we should request page 2
             return 2
 
         # Parse response as JSON
         res = response.json()
         if len(res) == 0:
-            # If this page was empty, we are done querying
             return None
-        
-        # time.sleep(1)
-        # Else, query next page
         return previous_token + 1
 
 
@@ -93,28 +79,10 @@ class CIN7Stream(RESTStream):
             params["order_by"] = self.replication_key
         return params
 
-    
-
-    def prepare_request_payload(
-        self, context: Optional[dict], next_page_token: Optional[Any]
-    ) -> Optional[dict]:
-        """Prepare the data payload for the REST API request.
-
-        By default, no payload will be sent (return None).
-        """
-        # TODO: Delete this method if no payload is required. (Most REST APIs.)
-        return None
-
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         """Parse the response and return an iterator of result rows."""
-        # TODO: Parse response body and return a set of records.
-        yield from extract_jsonpath(self.records_jsonpath, input=response.json())
-
-    
-    def post_process(self, row: dict, context: Optional[dict]) -> dict:
-        """As needed, append or transform raw data to match expected structure."""
-        # TODO: Delete this method if not needed.
-        return row
+        response_str = json.loads(response.text.replace("\\r", ""))
+        yield from extract_jsonpath(self.records_jsonpath, input=response_str)
 
     def log_backoff_attempt(self, details):
         LOGGER.info("ConnectionFailure detected, triggering backoff: %d try", details.get("tries"))

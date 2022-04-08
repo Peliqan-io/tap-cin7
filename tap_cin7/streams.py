@@ -400,3 +400,57 @@ class VoucherStream(CIN7Stream):
         th.Property("redeemedAmount",th.NumberType)
        
     ).to_dict()
+
+
+class ContactsStream(CIN7Stream):
+    """Define custom stream."""
+    name = "contact_supplier"
+    path = "/v1/Contacts?where=type='Supplier'&rows=250"
+    primary_keys = ["id"]
+    replication_key = None
+    records_jsonpath = "$[*]"
+    # Optionally, you may also use `schema_filepath` in place of `schema`:
+    # schema_filepath = SCHEMAS_DIR / "users.json"
+    schema = th.PropertiesList(
+        th.Property("id", th.IntegerType),
+        th.Property("createdDate", th.StringType),
+        th.Property("modifiedDate",th.StringType),
+        th.Property("isActive",th.BooleanType),
+        th.Property("type",th.StringType),
+        th.Property("company",th.StringType),
+        th.Property("firstName",th.StringType),
+        th.Property("lastName",th.StringType),
+        th.Property("jobTitle",th.StringType),
+        th.Property("email",th.StringType),
+        th.Property("website",th.StringType),
+        th.Property("phone",th.StringType),
+        th.Property("fax",th.StringType),
+        th.Property("mobile",th.StringType),
+        th.Property("address1",th.StringType),
+        th.Property("address2",th.StringType),
+        th.Property("city",th.StringType),
+        th.Property("state",th.StringType),
+        th.Property("postCode",th.StringType),
+        th.Property("country",th.StringType),
+        th.Property("postalAddress1",th.StringType),
+        th.Property("postalAddress2",th.StringType),
+        th.Property("postalCity",th.StringType),
+        th.Property("postalPostCode",th.StringType),
+        th.Property("postalState",th.StringType),
+        th.Property("postalCountry",th.StringType),
+        th.Property("notes",th.StringType),
+        th.Property("integrationRef",th.StringType),
+        th.Property("salesPersonId",th.IntegerType),
+        th.Property("accountNumber",th.StringType),
+        th.Property("billingId",th.IntegerType),
+        th.Property("billingCompany",th.StringType),
+        th.Property("accountsFirstName",th.StringType),
+        th.Property("accountsLastName",th.StringType),
+        th.Property("billingEmail",th.StringType),
+        th.Property("accountsPhone",th.StringType),
+        th.Property("billingCostCenter",th.StringType),
+        th.Property("priceColumn",th.StringType),
+        th.Property("creditLimit",th.NumberType),
+        th.Property("balanceOwing",th.NumberType)
+       
+    ).to_dict()

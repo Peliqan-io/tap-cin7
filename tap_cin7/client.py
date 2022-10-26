@@ -1,32 +1,30 @@
 """REST client handling, including CIN7Stream base class."""
 
-import requests
-from pathlib import Path
-from typing import Any,Callable, Dict, Optional, Union, List, Iterable
-import backoff
-import time
 import json
-import singer
 import logging
+import time
+from pathlib import Path
+from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+
+import backoff
+import requests
+import singer
 from memoization import cached
+from singer_sdk.authenticators import BasicAuthenticator
 from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
-from singer_sdk.authenticators import BasicAuthenticator
 
 LOGGER = singer.get_logger()
-logging.getLogger('backoff').setLevel(logging.CRITICAL)
-
-SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
+logging.getLogger("backoff").setLevel(logging.CRITICAL)
 
 
 class CIN7Stream(RESTStream):
     """CIN7 stream class."""
 
     url_base = "https://api.cin7.com/api"
-    
-    check_empty_response = True
 
+    check_empty_response = True
 
     records_jsonpath = "$[*]"
     next_page_token_jsonpath = ""
@@ -47,8 +45,6 @@ class CIN7Stream(RESTStream):
         if "user_agent" in self.config:
             headers["User-Agent"] = self.config.get("user_agent")
         return headers
-    
-
 
     def get_next_page_token(
         self, response: requests.Response, previous_token: Optional[Any]
@@ -63,7 +59,6 @@ class CIN7Stream(RESTStream):
             return None
         return previous_token + 1
 
-
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
@@ -73,7 +68,7 @@ class CIN7Stream(RESTStream):
             params["page"] = 1
         else:
             params["page"] = next_page_token
-        
+
         if self.replication_key:
             params["sort"] = "asc"
             params["order_by"] = self.replication_key
@@ -85,8 +80,11 @@ class CIN7Stream(RESTStream):
         yield from extract_jsonpath(self.records_jsonpath, input=response_str)
 
     def log_backoff_attempt(self, details):
-        LOGGER.info("ConnectionFailure detected, triggering backoff: %d try", details.get("tries"))
-    
+        LOGGER.info(
+            "ConnectionFailure detected, triggering backoff: %d try",
+            details.get("tries"),
+        )
+
     def request_decorator(self, func: Callable) -> Callable:
         """Instantiate a decorator for handling request failures.
 
@@ -105,12 +103,11 @@ class CIN7Stream(RESTStream):
                 RetriableAPIError,
                 FatalAPIError,
                 requests.exceptions.ReadTimeout,
-                requests.exceptions.TooManyRedirects
+                requests.exceptions.TooManyRedirects,
             ),
             max_tries=10,
             factor=2,
             max_time=600,
-            on_backoff=self.log_backoff_attempt
+            on_backoff=self.log_backoff_attempt,
         )(func)
         return decorator
-    

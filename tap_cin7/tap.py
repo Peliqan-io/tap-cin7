@@ -2,17 +2,17 @@
 
 from typing import List
 
-from singer_sdk import Tap, Stream
+from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
 
 from tap_cin7.streams import (
+    BranchesStream,
+    ContactsStream,
+    OrderStream,
     ProductStream,
     PurchaseOrdersStream,
-    OrderStream,
     StockStream,
     VoucherStream,
-    ContactsStream
-
 )
 
 STREAM_TYPES = [
@@ -21,31 +21,25 @@ STREAM_TYPES = [
     OrderStream,
     StockStream,
     VoucherStream,
-    ContactsStream
+    ContactsStream,
+    BranchesStream,
 ]
 
 
 class TapCIN7(Tap):
     """CIN7 tap class."""
+
     name = "tap-cin7"
 
     config_jsonschema = th.PropertiesList(
+        th.Property("api_key", th.StringType, required=True, description="api_key"),
         th.Property(
-            "api_key",
-            th.StringType,
-            required=True,
-            description="api_key"
-        ),
-        th.Property(
-            "api_password",
-            th.StringType,
-            required=True,
-            description="api_password"
+            "api_password", th.StringType, required=True, description="api_password"
         ),
         th.Property(
             "start_date",
             th.DateTimeType,
-            description="The earliest record date to sync"
+            description="The earliest record date to sync",
         ),
     ).to_dict()
 

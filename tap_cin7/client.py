@@ -104,6 +104,7 @@ class CIN7Stream(RESTStream):
                 FatalAPIError,
                 requests.exceptions.ReadTimeout,
                 requests.exceptions.TooManyRedirects,
+                requests.exceptions.ConnectionError
             ),
             max_tries=10,
             factor=2,

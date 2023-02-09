@@ -361,8 +361,8 @@ class VoucherStream(CIN7Stream):
 class ContactsStream(CIN7Stream):
     """Define custom stream."""
 
-    name = "contact_supplier"
-    path = "/v1/Contacts?where=type='Supplier'&rows=250"
+    name = "contacts"
+    path = "/v1/Contacts?rows=250"
     primary_keys = ["id"]
     replication_key = None
     records_jsonpath = "$[*]"
@@ -408,6 +408,12 @@ class ContactsStream(CIN7Stream):
         th.Property("creditLimit", th.NumberType),
         th.Property("balanceOwing", th.NumberType),
     ).to_dict()
+
+class ContactsSuppliersStream(ContactsStream):
+    """Define custom stream."""
+
+    name = "contacts_suppliers"
+    path = "/v1/Contacts?where=type='Supplier'&rows=250"
 
 
 class BranchesStream(CIN7Stream):

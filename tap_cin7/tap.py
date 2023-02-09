@@ -13,6 +13,7 @@ from tap_cin7.streams import (
     PurchaseOrdersStream,
     StockStream,
     VoucherStream,
+    ContactsSuppliersStream
 )
 
 STREAM_TYPES = [
@@ -23,6 +24,7 @@ STREAM_TYPES = [
     VoucherStream,
     ContactsStream,
     BranchesStream,
+    ContactsSuppliersStream
 ]
 
 

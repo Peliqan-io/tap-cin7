@@ -412,7 +412,7 @@ class ContactsStream(CIN7Stream):
 class ContactsSuppliersStream(ContactsStream):
     """Define custom stream."""
 
-    name = "contacts_suppliers"
+    name = "contact_supplier"
     path = "/v1/Contacts?where=type='Supplier'&rows=250"
 
 

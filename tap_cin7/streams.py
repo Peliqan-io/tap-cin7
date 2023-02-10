@@ -481,3 +481,55 @@ class BranchesStream(CIN7Stream):
             ),
         ),
     ).to_dict()
+
+
+class BomMastersStream(CIN7Stream):
+    """Define custom stream."""
+
+    name = "bom_masters"
+    path = "/v2/BomMasters?rows=250"
+    primary_keys = ["Id"]
+    replication_key = None
+    schema = th.PropertiesList(
+        th.Property("products", th.ArrayType(
+            th.ObjectType(
+                th.Property("id", th.IntegerType),
+                th.Property("productId", th.IntegerType),
+                th.Property("productOptionId", th.IntegerType),
+                th.Property("type", th.StringType),
+                th.Property("sort", th.IntegerType),
+                th.Property("code", th.StringType),
+                th.Property("name", th.StringType),
+                th.Property("option1", th.StringType),
+                th.Property("option2", th.StringType),
+                th.Property("option3", th.StringType),
+                th.Property("notes", th.StringType),
+                th.Property("qty", th.NumberType),
+                th.Property("unitCost", th.NumberType),
+                th.Property("components", th.ArrayType(
+                    th.ObjectType(
+                        th.Property("id", th.IntegerType),
+                        th.Property("productId", th.IntegerType),
+                        th.Property("productOptionId", th.IntegerType),
+                        th.Property("type", th.StringType),
+                        th.Property("sort", th.IntegerType),
+                        th.Property("code", th.StringType),
+                        th.Property("name", th.StringType),
+                        th.Property("option1", th.StringType),
+                        th.Property("option2", th.StringType),
+                        th.Property("option3", th.StringType),
+                        th.Property("notes", th.StringType),
+                        th.Property("qty", th.NumberType),
+                        th.Property("unitCost", th.NumberType)
+                    )
+                ))
+            )
+        )),
+        th.Property("id", th.IntegerType),
+        th.Property("createdDate", th.DateTimeType),
+        th.Property("modifiedDate", th.DateTimeType),
+        th.Property("createdBy", th.IntegerType),
+        th.Property("modifiedBy", th.IntegerType),
+        th.Property("productionNotes", th.StringType),
+        th.Property("reference", th.StringType),
+    ).to_dict()

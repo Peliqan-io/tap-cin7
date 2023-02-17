@@ -407,6 +407,8 @@ class ContactsStream(CIN7Stream):
         th.Property("priceColumn", th.StringType),
         th.Property("creditLimit", th.NumberType),
         th.Property("balanceOwing", th.NumberType),
+        th.Property("group", th.StringType),
+        th.Property("subGroup", th.StringType),
     ).to_dict()
 
 class ContactsSuppliersStream(ContactsStream):

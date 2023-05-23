@@ -14,6 +14,8 @@ from singer_sdk.authenticators import BasicAuthenticator
 from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
+from time import sleep
+
 
 LOGGER = singer.get_logger()
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
@@ -112,3 +114,19 @@ class CIN7Stream(RESTStream):
             on_backoff=self.log_backoff_attempt,
         )(func)
         return decorator
+
+    def validate_response(self, response: requests.Response) -> None:
+        sleep(1.01)
+        if 400 <= response.status_code < 500:
+            msg = (
+                f"{response.status_code} Client Error: "
+                f"{response.reason} for path: {self.path}"
+            )
+            raise FatalAPIError(msg)
+
+        elif 500 <= response.status_code < 600:
+            msg = (
+                f"{response.status_code} Server Error: "
+                f"{response.reason} for path: {self.path}"
+            )
+            raise RetriableAPIError(msg)

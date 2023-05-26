@@ -11,14 +11,14 @@ class ProductStream(CIN7Stream):
     name = "products"
     path = "/v1/Products?rows=250"
     primary_keys = ["id"]
-    replication_key = None
+    replication_key = "modifiedDate"
     records_jsonpath = "$[*]"
     schema = th.PropertiesList(
         th.Property("id", th.IntegerType),
         th.Property("name", th.StringType),
         th.Property("status", th.StringType),
-        th.Property("createdDate", th.StringType),
-        th.Property("modifiedDate", th.StringType),
+        th.Property("createdDate", th.DateTimeType),
+        th.Property("modifiedDate", th.DateTimeType),
         th.Property("description", th.StringType),
         th.Property(
             "images", th.ArrayType(th.ObjectType(th.Property("link", th.StringType)))
@@ -34,8 +34,8 @@ class ProductStream(CIN7Stream):
             th.ArrayType(
                 th.ObjectType(
                     th.Property("id", th.IntegerType),
-                    th.Property("createdDate", th.StringType),
-                    th.Property("modifiedDate", th.StringType),
+                    th.Property("createdDate", th.DateTimeType),
+                    th.Property("modifiedDate", th.DateTimeType),
                     th.Property("status", th.StringType),
                     th.Property("productId", th.IntegerType),
                     th.Property("code", th.StringType),
@@ -71,12 +71,12 @@ class PurchaseOrdersStream(CIN7Stream):
     name = "purchase_orders"
     path = "/v1/PurchaseOrders?rows=250"
     primary_keys = ["id"]
-    replication_key = None
+    replication_key = "modifiedDate"
     records_jsonpath = "$[*]"
     schema = th.PropertiesList(
         th.Property("id", th.IntegerType),
-        th.Property("createdDate", th.StringType),
-        th.Property("modifiedDate", th.StringType),
+        th.Property("createdDate", th.DateTimeType),
+        th.Property("modifiedDate", th.DateTimeType),
         th.Property("createdBy", th.IntegerType),
         th.Property("processedBy", th.IntegerType),
         th.Property("isApproved", th.BooleanType),
@@ -150,7 +150,7 @@ class PurchaseOrdersStream(CIN7Stream):
             th.ArrayType(
                 th.ObjectType(
                     th.Property("id", th.IntegerType),
-                    th.Property("createdDate", th.StringType),
+                    th.Property("createdDate", th.DateTimeType),
                     th.Property("transactionId", th.IntegerType),
                     th.Property("parentId", th.IntegerType),
                     th.Property("productId", th.IntegerType),
@@ -186,14 +186,14 @@ class OrderStream(CIN7Stream):
     name = "sale_order"
     path = "/v1/SalesOrders?rows=250"
     primary_keys = ["id"]
-    replication_key = None
+    replication_key = "modifiedDate"
     records_jsonpath = "$[*]"
     # Optionally, you may also use `schema_filepath` in place of `schema`:
     # schema_filepath = SCHEMAS_DIR / "users.json"
     schema = th.PropertiesList(
         th.Property("id", th.IntegerType),
-        th.Property("createdDate", th.StringType),
-        th.Property("modifiedDate", th.StringType),
+        th.Property("createdDate", th.DateTimeType),
+        th.Property("modifiedDate", th.DateTimeType),
         th.Property("createdBy", th.IntegerType),
         th.Property("processedBy", th.IntegerType),
         th.Property("isApproved", th.BooleanType),
@@ -269,7 +269,7 @@ class OrderStream(CIN7Stream):
             th.ArrayType(
                 th.ObjectType(
                     th.Property("id", th.IntegerType),
-                    th.Property("createdDate", th.StringType),
+                    th.Property("createdDate", th.DateTimeType),
                     th.Property("transactionId", th.IntegerType),
                     th.Property("parentId", th.IntegerType),
                     th.Property("productId", th.IntegerType),
@@ -306,13 +306,13 @@ class StockStream(CIN7Stream):
     name = "stockstream"
     path = "/v1/Stock?rows=250"
     primary_keys = ["productId"]
-    replication_key = None
+    replication_key = "modifiedDate"
     records_jsonpath = "$[*]"
 
     schema = th.PropertiesList(
         th.Property("productId", th.IntegerType),
         th.Property("productOptionId", th.IntegerType),
-        th.Property("modifiedDate", th.StringType),
+        th.Property("modifiedDate", th.DateTimeType),
         th.Property("styleCode", th.StringType),
         th.Property("code", th.StringType),
         th.Property("barcode", th.StringType),
@@ -344,7 +344,7 @@ class VoucherStream(CIN7Stream):
     # schema_filepath = SCHEMAS_DIR / "users.json"
     schema = th.PropertiesList(
         th.Property("customerID", th.IntegerType),
-        th.Property("createdDate", th.StringType),
+        th.Property("createdDate", th.DateTimeType),
         th.Property("status", th.StringType),
         th.Property("code", th.StringType),
         th.Property("type", th.StringType),
@@ -364,12 +364,12 @@ class ContactsStream(CIN7Stream):
     name = "contacts"
     path = "/v1/Contacts?rows=250"
     primary_keys = ["id"]
-    replication_key = None
+    replication_key = "modifiedDate"
     records_jsonpath = "$[*]"
     schema = th.PropertiesList(
         th.Property("id", th.IntegerType),
-        th.Property("createdDate", th.StringType),
-        th.Property("modifiedDate", th.StringType),
+        th.Property("createdDate", th.DateTimeType),
+        th.Property("modifiedDate", th.DateTimeType),
         th.Property("isActive", th.BooleanType),
         th.Property("type", th.StringType),
         th.Property("company", th.StringType),
@@ -424,7 +424,7 @@ class BranchesStream(CIN7Stream):
     name = "branches"
     path = "/v1/Branches"
     primary_keys = ["Id"]
-    replication_key = None
+    replication_key = "modifiedDate"
     schema = th.PropertiesList(
         th.Property("id", th.NumberType),
         th.Property("branchType", th.StringType),
@@ -491,7 +491,7 @@ class BomMastersStream(CIN7Stream):
     name = "bom_masters"
     path = "/v2/BomMasters?rows=250"
     primary_keys = ["Id"]
-    replication_key = None
+    replication_key = "modifiedDate"
     schema = th.PropertiesList(
         th.Property("products", th.ArrayType(
             th.ObjectType(

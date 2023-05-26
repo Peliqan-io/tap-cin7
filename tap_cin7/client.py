@@ -15,6 +15,7 @@ from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
 from time import sleep
+from pendulum import parse
 
 
 LOGGER = singer.get_logger()
@@ -54,13 +55,19 @@ class CIN7Stream(RESTStream):
         """Return a token for identifying next page or None if no more pages."""
         if previous_token is None:
             return 2
-
         # Parse response as JSON
         res = response.json()
         if len(res) == 0:
             return None
         return previous_token + 1
 
+    def get_starting_time(self, context):
+        start_date = self.config.get("start_date")
+        if start_date:
+            start_date = parse(self.config.get("start_date"))
+        rep_key = self.get_starting_timestamp(context)
+        return rep_key or start_date
+    
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
@@ -70,10 +77,10 @@ class CIN7Stream(RESTStream):
             params["page"] = 1
         else:
             params["page"] = next_page_token
-
-        if self.replication_key:
-            params["sort"] = "asc"
-            params["order_by"] = self.replication_key
+        start_date = self.get_starting_time(context)
+        if self.replication_key and start_date:
+            start_date = start_date.strftime('%Y-%m-%dT%H:%M:%SZ')
+            params["where"] = f"{self.replication_key}>'{start_date}'"
         return params
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:

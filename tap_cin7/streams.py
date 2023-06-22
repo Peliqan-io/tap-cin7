@@ -423,7 +423,7 @@ class BranchesStream(CIN7Stream):
 
     name = "branches"
     path = "/v1/Branches"
-    primary_keys = ["Id"]
+    primary_keys = ["id"]
     replication_key = "modifiedDate"
     schema = th.PropertiesList(
         th.Property("id", th.NumberType),
@@ -490,7 +490,7 @@ class BomMastersStream(CIN7Stream):
 
     name = "bom_masters"
     path = "/v2/BomMasters?rows=250"
-    primary_keys = ["Id"]
+    primary_keys = ["id"]
     replication_key = "modifiedDate"
     schema = th.PropertiesList(
         th.Property("products", th.ArrayType(

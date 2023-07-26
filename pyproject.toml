@@ -13,7 +13,7 @@ license = "Apache 2.0"
 python = ">=3.6.2"
 requests = "^2.25.1"
 singer-sdk = {git = "https://github.com/peliqan-io/meltano-sdk", branch = "main"}
-pipelinewise-singer-python = {git = "https://github.com/Peliqan-io/pipelinewise-singer-python", branch = "master"}
+pipelinewise-singer-python = {git = "https://github.com/Peliqan-io/pipelinewise-singer-python", branch = "jsonschema-version"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
